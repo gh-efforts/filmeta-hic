@@ -13,7 +13,7 @@ const (
 
 type (
 	Page struct {
-		Page        int64 `json:"paginator" form:"paginator" binding:"required"`
+		Page        int64 `json:"page" form:"page" binding:"required"`
 		PageSize    int64 `json:"pageSize" form:"pageSize"`
 		PageMaxSize int64 `json:"-" form:"-"`
 	}
@@ -75,7 +75,7 @@ func (p *Page) Paginate() *options.FindOptions {
 
 type ListPage struct {
 	TotalPage int64 `json:"totalPage"`
-	Page      int64 `json:"paginator"`
+	Page      int64 `json:"page"`
 	PageSize  int64 `json:"pageSize"`
 	Total     int64 `json:"total"`
 }
