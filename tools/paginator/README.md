@@ -11,11 +11,11 @@ import (
 
 	"go.mongodb.org/mongo-driver/mongo"
 
-	"github.com/bitrainforest/filmeta-hic/tools/paginator"
+	"github.com/bitrainforest/hic/tools/paginator"
 
 	"go.mongodb.org/mongo-driver/bson"
 
-	"github.com/bitrainforest/filmeta-hic/store/mongox"
+	"github.com/bitrainforest/hic/store/mongox"
 )
 
 type (

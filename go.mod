@@ -1,4 +1,4 @@
-module github.com/bitrainforest/filmeta-hic
+module github.com/bitrainforest/hic
 
 go 1.17
 
