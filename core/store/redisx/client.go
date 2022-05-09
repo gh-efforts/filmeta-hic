@@ -7,7 +7,7 @@ import (
 	"time"
 
 	"github.com/bitrainforest/filmeta-hic/core/assert"
-	"github.com/go-redis/redis/v7"
+	"github.com/go-redis/redis/v8"
 )
 
 type (
@@ -60,7 +60,7 @@ func Init(cfg *Conf) (RedisNodes, error) {
 
 		//cli.AddHook()
 
-		ping := cli.Ping()
+		ping := cli.Ping(context.Background())
 		if ping.Val() == "" {
 			return nil, fmt.Errorf("redis connect addr %s err: %s", addr, ping.Err())
 		}

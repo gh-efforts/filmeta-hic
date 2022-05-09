@@ -8,7 +8,7 @@ import (
 	configHelper "github.com/bitrainforest/filmeta-hic/core/config"
 
 	"github.com/bitrainforest/filmeta-hic/core/store/redisx"
-	"github.com/go-redis/redis/v7"
+	"github.com/go-redis/redis/v8"
 
 	"github.com/go-kratos/kratos/v2/config"
 )

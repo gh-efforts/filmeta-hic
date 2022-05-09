@@ -1,13 +1,14 @@
 package redisx
 
 import (
+	"context"
 	"fmt"
 	"math/rand"
 	"strconv"
 	"sync/atomic"
 	"time"
 
-	"github.com/go-redis/redis/v7"
+	"github.com/go-redis/redis/v8"
 )
 
 // Copy from https://github.com/tal-tech/go-zero/blob/master/core/stores/redis/redislock.go
@@ -69,9 +70,9 @@ func SetLockExpire(seconds uint32) RedisLockOption {
 }
 
 // Acquire acquires the lock.
-func (rl *RedisLock) Acquire() (bool, error) {
+func (rl *RedisLock) Acquire(ctx context.Context) (bool, error) {
 	seconds := atomic.LoadUint32(&rl.seconds)
-	resp, err := rl.store.Eval(lockCommand, []string{rl.key}, []string{
+	resp, err := rl.store.Eval(ctx, lockCommand, []string{rl.key}, []string{
 		rl.id, strconv.Itoa(int(seconds)*millisPerSecond + tolerance),
 	}).Result()
 	if err == redis.Nil {
@@ -91,8 +92,8 @@ func (rl *RedisLock) Acquire() (bool, error) {
 }
 
 // Release releases the lock.
-func (rl *RedisLock) Release() bool {
-	resp, err := rl.store.Eval(delCommand, []string{rl.key}, []string{rl.id}).Result()
+func (rl *RedisLock) Release(ctx context.Context) bool {
+	resp, err := rl.store.Eval(ctx, delCommand, []string{rl.key}, []string{rl.id}).Result()
 	if err != nil {
 		return false
 	}
@@ -101,14 +102,6 @@ func (rl *RedisLock) Release() bool {
 		return false
 	}
 	return reply == 1
-}
-
-// Unsafe releases the lock ignore the value of lock
-func (rl *RedisLock) UnsafeRelease() {
-	if err := rl.store.Del(rl.key).Err(); err != nil {
-		println(err)
-		// todo log
-	}
 }
 
 // SetExpire sets the expire.

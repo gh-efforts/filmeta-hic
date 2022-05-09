@@ -1,32 +1,33 @@
 package redisx
 
 import (
+	"context"
 	"testing"
 
-	"github.com/go-redis/redis/v7"
+	"github.com/go-redis/redis/v8"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestRedisLock(t *testing.T) {
 	client := redis.NewClient(&redis.Options{Addr: "localhost:6379"})
-
+	ctx := context.Background()
 	key := "test"
 	firstLock := NewRedisLock(client, key)
 	firstLock.SetExpire(30)
-	firstAcquire, err := firstLock.Acquire()
+	firstAcquire, err := firstLock.Acquire(ctx)
 	assert.Nil(t, err)
 	assert.True(t, firstAcquire)
 
 	secondLock := NewRedisLock(client, key)
 	secondLock.SetExpire(30)
-	againAcquire, err := secondLock.Acquire()
+	againAcquire, err := secondLock.Acquire(ctx)
 	assert.Nil(t, err)
 	assert.False(t, againAcquire)
 
-	release := firstLock.Release()
+	release := firstLock.Release(ctx)
 	assert.True(t, release)
 
-	endAcquire, err := secondLock.Acquire()
+	endAcquire, err := secondLock.Acquire(ctx)
 	assert.Nil(t, err)
 	assert.True(t, endAcquire)
 }
