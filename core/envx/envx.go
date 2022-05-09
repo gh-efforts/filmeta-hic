@@ -17,7 +17,7 @@ type FixedEnv struct {
 }
 
 var (
-	fixedEnv = &FixedEnv{HttpAddr: ":8088", GinMODE: "debug"}
+	fixedEnv = &FixedEnv{HttpAddr: ":8088", GinMODE: "debug", ConfigETCD: "etcd://127.0.0.1:2379"}
 )
 
 func init() {
