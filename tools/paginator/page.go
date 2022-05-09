@@ -2,6 +2,7 @@ package paginator
 
 import (
 	"go.mongodb.org/mongo-driver/mongo/options"
+
 	"math"
 )
 

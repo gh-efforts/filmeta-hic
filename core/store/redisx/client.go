@@ -3,11 +3,11 @@ package redisx
 import (
 	"context"
 	"fmt"
-
-	"github.com/go-redis/redis/v7"
-
 	"strings"
 	"time"
+
+	"github.com/bitrainforest/filmeta-hic/core/assert"
+	"github.com/go-redis/redis/v7"
 )
 
 type (
@@ -15,6 +15,7 @@ type (
 		Addr     string `json:"addr"`
 		DB       int    `json:"db"`
 		Password string `json:"password"`
+		UserName string `json:"userName"`
 
 		PoolSize    int `json:"pool_size"`
 		MaxRetries  int `json:"max_retries"`
@@ -30,8 +31,9 @@ type (
 func MustInit(cfg *Conf) RedisNodes {
 	nodes, err := Init(cfg)
 	if err != nil {
-		panic(fmt.Sprintf("init redis err:%v", err))
+		assert.CheckErr(fmt.Errorf("setup redis err: %s", err))
 	}
+
 	return nodes
 }
 
@@ -47,10 +49,10 @@ func Init(cfg *Conf) (RedisNodes, error) {
 			continue
 		}
 		cli := redis.NewClient(&redis.Options{
-			Addr:     addr,
-			DB:       cfg.DB,
-			Password: cfg.Password,
-
+			Addr:        addr,
+			DB:          cfg.DB,
+			Password:    cfg.Password,
+			Username:    cfg.UserName,
 			MaxRetries:  cfg.MaxRetries,
 			PoolSize:    cfg.PoolSize,
 			IdleTimeout: time.Duration(cfg.IdleTimeout) * time.Second,

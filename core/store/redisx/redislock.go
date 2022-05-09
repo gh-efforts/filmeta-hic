@@ -103,6 +103,14 @@ func (rl *RedisLock) Release() bool {
 	return reply == 1
 }
 
+// Unsafe releases the lock ignore the value of lock
+func (rl *RedisLock) UnsafeRelease() {
+	if err := rl.store.Del(rl.key).Err(); err != nil {
+		println(err)
+		// todo log
+	}
+}
+
 // SetExpire sets the expire.
 func (rl *RedisLock) SetExpire(seconds int) {
 	atomic.StoreUint32(&rl.seconds, uint32(seconds))
