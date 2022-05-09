@@ -3,6 +3,12 @@ package model
 import (
 	"github.com/filecoin-project/lotus/chain/types"
 	"github.com/ipfs/go-cid"
+	jsoniter "github.com/json-iterator/go"
+)
+
+var (
+	// replace encoding/json
+	json = jsoniter.ConfigCompatibleWithStandardLibrary
 )
 
 type Trading struct {
@@ -26,4 +32,13 @@ func (trading *Trading) GetMCid() cid.Cid {
 
 func (trading *Trading) GetMsg() *types.Message {
 	return trading.Msg
+}
+
+func (trading *Trading) Marshal() ([]byte, error) {
+	return json.Marshal(trading)
+}
+
+func UnmarshalMsg(b []byte) (trading *Trading, err error) {
+	err = json.Unmarshal(b, &trading)
+	return
 }
