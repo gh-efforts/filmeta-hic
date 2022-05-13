@@ -14,7 +14,7 @@ type IpfsLog struct {
 }
 
 func NewLogger(name string) kLog.Logger {
-	return &IpfsLog{log: log.Logger(name)}
+	return &IpfsLog{log: log.WithStacktrace(log.Logger(name), log.LevelWarn)}
 }
 
 func (l IpfsLog) Log(level kLog.Level, keyvals ...interface{}) error {
