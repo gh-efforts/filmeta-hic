@@ -2,6 +2,7 @@ package model
 
 import (
 	"github.com/filecoin-project/lotus/chain/types"
+	"github.com/filecoin-project/lotus/chain/vm"
 	"github.com/ipfs/go-cid"
 	jsoniter "github.com/json-iterator/go"
 )
@@ -11,34 +12,43 @@ var (
 	json = jsoniter.ConfigCompatibleWithStandardLibrary
 )
 
-type Trading struct {
-	TipSet *types.TipSet  `json:"tipSet"`
-	MCid   cid.Cid        `json:"mCid"`
-	Msg    *types.Message `json:"msg"`
-	// todo add more fields
+type Message struct {
+	TipSet   *types.TipSet  `json:"tipSet"`
+	MCid     cid.Cid        `json:"mCid"`
+	Msg      *types.Message `json:"msg"`
+	Ret      *vm.ApplyRet   `json:"ApplyRet"`
+	Implicit bool           `json:"implicit"`
 }
 
-func (trading *Trading) IsEmpty() bool {
-	return trading.MCid.String() == ""
+func (msg *Message) IsEmpty() bool {
+	return msg.MCid.String() == ""
 }
 
-func (trading *Trading) GetTipSet() *types.TipSet {
-	return trading.TipSet
+func (msg *Message) GetTipSet() *types.TipSet {
+	return msg.TipSet
 }
 
-func (trading *Trading) GetMCid() cid.Cid {
-	return trading.MCid
+func (msg *Message) GetMCid() cid.Cid {
+	return msg.MCid
 }
 
-func (trading *Trading) GetMsg() *types.Message {
-	return trading.Msg
+func (msg *Message) GetMsg() *types.Message {
+	return msg.Msg
 }
 
-func (trading *Trading) Marshal() ([]byte, error) {
-	return json.Marshal(trading)
+func (msg *Message) Marshal() ([]byte, error) {
+	return json.Marshal(msg)
 }
 
-func UnmarshalMsg(b []byte) (trading *Trading, err error) {
-	err = json.Unmarshal(b, &trading)
+func (msg *Message) GetRet() *vm.ApplyRet {
+	return msg.Ret
+}
+
+func (msg *Message) GetImplicit() bool {
+	return msg.Implicit
+}
+
+func UnmarshalMsg(b []byte) (msg *Message, err error) {
+	err = json.Unmarshal(b, &msg)
 	return
 }
