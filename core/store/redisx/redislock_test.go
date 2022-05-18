@@ -13,24 +13,22 @@ func TestRedisLock(t *testing.T) {
 	ctx := context.Background()
 	key := "test"
 	firstLock := NewRedisLock(client)
-	firstLock.SetKey(key)
 	firstLock.SetExpire(30)
-	firstAcquire, err := firstLock.Acquire(ctx)
+	firstAcquire, err := firstLock.Acquire(ctx, key)
 	assert.Nil(t, err)
 	assert.True(t, firstAcquire)
 
 	secondLock := NewRedisLock(client)
-	secondLock.SetKey(key)
 
 	secondLock.SetExpire(30)
-	againAcquire, err := secondLock.Acquire(ctx)
+	againAcquire, err := secondLock.Acquire(ctx, key)
 	assert.Nil(t, err)
 	assert.False(t, againAcquire)
 
-	release := firstLock.Release(ctx)
+	release := firstLock.Release(ctx, key)
 	assert.True(t, release)
 
-	endAcquire, err := secondLock.Acquire(ctx)
+	endAcquire, err := secondLock.Acquire(ctx, key)
 	assert.Nil(t, err)
 	assert.True(t, endAcquire)
 }
@@ -56,7 +54,6 @@ func TestNewRedisLock(t *testing.T) {
 			want: &RedisLock{
 				store:   nil,
 				seconds: 3,
-				key:     "default",
 			},
 		},
 	}
@@ -64,7 +61,6 @@ func TestNewRedisLock(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			got := NewRedisLock(tt.args.store, tt.args.options...)
 			assert.Equal(t, got.seconds, tt.want.seconds)
-			assert.Equal(t, got.key, tt.want.key)
 			assert.Nil(t, got.store)
 		})
 	}
