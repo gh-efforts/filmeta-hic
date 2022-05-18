@@ -12,13 +12,16 @@ func TestRedisLock(t *testing.T) {
 	client := redis.NewClient(&redis.Options{Addr: "localhost:6379"})
 	ctx := context.Background()
 	key := "test"
-	firstLock := NewRedisLock(client, key)
+	firstLock := NewRedisLock(client)
+	firstLock.SetKey(key)
 	firstLock.SetExpire(30)
 	firstAcquire, err := firstLock.Acquire(ctx)
 	assert.Nil(t, err)
 	assert.True(t, firstAcquire)
 
-	secondLock := NewRedisLock(client, key)
+	secondLock := NewRedisLock(client)
+	secondLock.SetKey(key)
+
 	secondLock.SetExpire(30)
 	againAcquire, err := secondLock.Acquire(ctx)
 	assert.Nil(t, err)
@@ -47,19 +50,19 @@ func TestNewRedisLock(t *testing.T) {
 			name: "test-second",
 			args: args{
 				store:   nil,
-				key:     "test-three-second-expire",
+				key:     "default",
 				options: []RedisLockOption{SetLockExpire(3)},
 			},
 			want: &RedisLock{
 				store:   nil,
 				seconds: 3,
-				key:     "test-three-second-expire",
+				key:     "default",
 			},
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got := NewRedisLock(tt.args.store, tt.args.key, tt.args.options...)
+			got := NewRedisLock(tt.args.store, tt.args.options...)
 			assert.Equal(t, got.seconds, tt.want.seconds)
 			assert.Equal(t, got.key, tt.want.key)
 			assert.Nil(t, got.store)
