@@ -46,19 +46,36 @@ func init() {
 }
 
 // NewRedisLock returns a RedisLock.
-func NewRedisLock(store *redis.Client, key string, options ...RedisLockOption) *RedisLock {
+func NewRedisLock(store *redis.Client, options ...RedisLockOption) *RedisLock {
 	r := &RedisLock{
 		store: store,
-		key:   key,
+		key:   "default",
 		id:    randomStr(randomLen),
 	}
-
 	for _, option := range options {
 		option(r)
 	}
-
 	return r
 }
+
+func (rl *RedisLock) SetKey(key string) {
+	rl.key = key
+}
+
+// NewRedisLock returns a RedisLock.
+//func NewRedisLock(store *redis.Client, key string, options ...RedisLockOption) *RedisLock {
+//	r := &RedisLock{
+//		store: store,
+//		key:   key,
+//		id:    randomStr(randomLen),
+//	}
+//
+//	for _, option := range options {
+//		option(r)
+//	}
+//
+//	return r
+//}
 
 func SetLockExpire(seconds uint32) RedisLockOption {
 	return func(lock *RedisLock) {
