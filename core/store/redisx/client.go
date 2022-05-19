@@ -77,6 +77,6 @@ func (nodes RedisNodes) GetClient(ctx context.Context) RedisNode {
 	}
 }
 
-func (node RedisNode) NewLocker(opts ...RedisLockOption) *RedisLock {
-	return NewRedisLock(node.Client, opts...)
+func (node RedisNode) NewLocker(key string, opts ...RedisLockOption) *RedisLock {
+	return NewRedisLock(node.Client, key, opts...)
 }

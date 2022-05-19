@@ -35,6 +35,7 @@ type (
 	RedisLock struct {
 		store   *redis.Client
 		seconds uint32
+		key     string
 		id      string
 	}
 	RedisLockOption func(lock *RedisLock)
@@ -45,31 +46,19 @@ func init() {
 }
 
 // NewRedisLock returns a RedisLock.
-func NewRedisLock(store *redis.Client, options ...RedisLockOption) *RedisLock {
+func NewRedisLock(store *redis.Client, key string, options ...RedisLockOption) *RedisLock {
 	r := &RedisLock{
 		store: store,
+		key:   key,
 		id:    randomStr(randomLen),
 	}
+
 	for _, option := range options {
 		option(r)
 	}
+
 	return r
 }
-
-// NewRedisLock returns a RedisLock.
-//func NewRedisLock(store *redis.Client, key string, options ...RedisLockOption) *RedisLock {
-//	r := &RedisLock{
-//		store: store,
-//		key:   key,
-//		id:    randomStr(randomLen),
-//	}
-//
-//	for _, option := range options {
-//		option(r)
-//	}
-//
-//	return r
-//}
 
 func SetLockExpire(seconds uint32) RedisLockOption {
 	return func(lock *RedisLock) {
@@ -81,15 +70,15 @@ func SetLockExpire(seconds uint32) RedisLockOption {
 }
 
 // Acquire acquires the lock.
-func (rl *RedisLock) Acquire(ctx context.Context, key string) (bool, error) {
+func (rl *RedisLock) Acquire(ctx context.Context) (bool, error) {
 	seconds := atomic.LoadUint32(&rl.seconds)
-	resp, err := rl.store.Eval(ctx, lockCommand, []string{key}, []string{
+	resp, err := rl.store.Eval(ctx, lockCommand, []string{rl.key}, []string{
 		rl.id, strconv.Itoa(int(seconds)*millisPerSecond + tolerance),
 	}).Result()
 	if err == redis.Nil {
 		return false, nil
 	} else if err != nil {
-		return false, fmt.Errorf("error on acquiring lock for %s, %s", key, err.Error())
+		return false, fmt.Errorf("error on acquiring lock for %s, %s", rl.key, err.Error())
 	} else if resp == nil {
 		return false, nil
 	}
@@ -103,8 +92,8 @@ func (rl *RedisLock) Acquire(ctx context.Context, key string) (bool, error) {
 }
 
 // Release releases the lock.
-func (rl *RedisLock) Release(ctx context.Context, key string) bool {
-	resp, err := rl.store.Eval(ctx, delCommand, []string{key}, []string{rl.id}).Result()
+func (rl *RedisLock) Release(ctx context.Context) bool {
+	resp, err := rl.store.Eval(ctx, delCommand, []string{rl.key}, []string{rl.id}).Result()
 	if err != nil {
 		return false
 	}
