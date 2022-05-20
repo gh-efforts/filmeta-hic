@@ -16,7 +16,7 @@ type Message struct {
 	TipSet   *types.TipSet  `json:"tipSet"`
 	MCid     cid.Cid        `json:"mCid"`
 	Msg      *types.Message `json:"msg"`
-	Ret      *vm.ApplyRet   `json:"ApplyRet"`
+	Ret      *vm.ApplyRet   `json:"applyRet"`
 	Implicit bool           `json:"implicit"`
 }
 
