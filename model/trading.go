@@ -20,8 +20,8 @@ type Message struct {
 	Implicit bool           `json:"implicit"`
 }
 
-func (msg *Message) IsEmpty() bool {
-	return msg.MCid.String() == ""
+func (msg *Message) Defined() bool {
+	return msg.MCid.Defined()
 }
 
 func (msg *Message) GetTipSet() *types.TipSet {
