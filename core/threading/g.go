@@ -1,11 +1,17 @@
 package threading
 
-import "fmt"
+import (
+	"fmt"
+
+	"github.com/bitrainforest/filmeta-hic/core/log"
+)
 
 func GoSafe(fn func()) {
 	defer func() {
 		if p := recover(); p != nil {
-			//todo log
+			if log.IsInit() {
+				log.Warnf("[GoSafe] err: %v", p)
+			}
 			fmt.Println("GoSafe happens panic:", p)
 		}
 	}()

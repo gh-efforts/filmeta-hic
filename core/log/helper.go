@@ -63,3 +63,7 @@ func Errorf(format string, vals ...interface{}) {
 func Warnf(format string, vals ...interface{}) {
 	helper.Warnf(format, vals...)
 }
+
+func IsInit() bool {
+	return helper != nil
+}

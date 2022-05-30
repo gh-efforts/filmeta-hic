@@ -11,7 +11,7 @@ import (
 type FixedEnv struct {
 	ConfigETCD     string `json:"CONFIG_ETCD"` //   "etcd://127.0.0.1:2379"
 	ConfigPath     string `json:"CONFIG_PATH"`
-	HttpAddr       string `json:"GAPI_ADDR"` //   default ":8080"
+	HttpAddr       string `json:"GAPI_ADDR"` //   default ":8088"
 	GinMODE        string `json:"GIN_MODE"`  //  default "debug"
 	Repo           string `json:"REPO"`
 	ImportSnapshot string `json:"IMPORT_SNAPSHOT"`
