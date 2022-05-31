@@ -67,7 +67,9 @@ func Init(cfg *Conf) (RedisNodes, error) {
 
 		nodes = append(nodes, RedisNode{cli})
 	}
-
+	if len(nodes) == 0 {
+		return nil, fmt.Errorf("empty redis nodes")
+	}
 	return nodes, nil
 }
 
