@@ -12,11 +12,15 @@ import (
 
 const (
 	defaultTimeout = time.Second * 5
+	MinPool        = 80
+	DefaultMaxPool = 400
+	AllowMaxPool   = 600
 )
 
 type (
 	Conf struct {
-		Uri string `json:"uri"` // example: mongodb://localhost:27017
+		Uri      string `json:"uri"`      // example: mongodb://localhost:27017
+		WorkPool uint64 `json:"workPool"` // mongodb connection pool size
 	}
 )
 
@@ -27,6 +31,12 @@ func (conf *Conf) GetClient() (*mongo.Client, error) {
 	opts := new(options.ClientOptions)
 	opts.SetConnectTimeout(defaultTimeout)
 	opts.SetServerSelectionTimeout(defaultTimeout)
+	opts.SetMinPoolSize(MinPool)
+	opts.SetMaxPoolSize(DefaultMaxPool)
+	if conf.WorkPool > MinPool && conf.WorkPool <= AllowMaxPool {
+		opts.SetMaxPoolSize(conf.WorkPool)
+	}
+
 	opts.ApplyURI(conf.Uri)
 	var (
 		err    error
