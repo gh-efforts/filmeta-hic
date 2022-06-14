@@ -12,6 +12,9 @@ var (
 )
 
 func WarpMongoErr(err error) error {
+	if err == nil {
+		return nil
+	}
 	if err != nil && errors.Is(err, mongo.ErrNoDocuments) {
 		return nil
 	}
