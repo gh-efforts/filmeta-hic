@@ -3,6 +3,7 @@ package mongox
 import (
 	"context"
 	"fmt"
+	"go.mongodb.org/mongo-driver/bson/bsoncodec"
 	"time"
 
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -21,6 +22,7 @@ type (
 	Conf struct {
 		Uri      string `json:"uri"`      // example: mongodb://localhost:27017
 		WorkPool uint64 `json:"workPool"` // mongodb connection pool size
+		Register *bsoncodec.Registry
 	}
 )
 
@@ -42,6 +44,9 @@ func (conf *Conf) GetClient() (*mongo.Client, error) {
 		err    error
 		client *mongo.Client
 	)
+	if conf.Register != nil {
+		opts.SetRegistry(conf.Register)
+	}
 	client, err = mongo.Connect(context.TODO(), opts)
 	if err != nil {
 		return nil, fmt.Errorf("mongo connect err: %v", err)
