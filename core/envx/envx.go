@@ -34,6 +34,13 @@ func GetEnvs() FixedEnv {
 	return *fixedEnv
 }
 
+func (f *FixedEnv) IsDebug() bool {
+	return f.GinMODE == "debug"
+}
+func (f *FixedEnv) IsPro() bool {
+	return f.GinMODE == "pro"
+}
+
 func Setup() error {
 	c := config.New(
 		config.WithSource(env.NewSource()))
