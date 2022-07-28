@@ -21,11 +21,11 @@ func GetRedisClient(ctx context.Context) *redis.Client {
 	return redisBundle.GetClient(ctx).Client
 }
 
-func MustLoadRedis(confSource config.Config) {
+func MustLoadRedis(confSource config.Config, key string) {
 	var (
 		conf redisx.Conf
 	)
-	if err := configHelper.ScanConfValue(confSource, "data.redis", &conf); err != nil {
+	if err := configHelper.ScanConfValue(confSource, key, &conf); err != nil {
 		assert.CheckErr(err)
 	}
 	redisBundle = redisx.MustInit(&conf)
