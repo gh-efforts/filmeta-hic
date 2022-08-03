@@ -3,9 +3,57 @@ package random
 import (
 	"math/rand"
 	"reflect"
+	"strings"
 	"time"
 	"unsafe"
 )
+
+type Charset string
+
+// Charsets
+const (
+	Uppercase    Charset = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+	Lowercase    Charset = "abcdefghijklmnopqrstuvwxyz"
+	Alphabetic           = Uppercase + Lowercase
+	Numeric      Charset = "0123456789"
+	Alphanumeric         = Alphabetic + Numeric
+	Symbols      Charset = "`" + `~!@#$%^&*()-_+={}[]|\;:"<>,./?`
+	Hex                  = Numeric + "abcdef"
+)
+
+type Random struct {
+}
+
+var (
+	global = New()
+)
+
+func New() *Random {
+	rand.Seed(time.Now().UnixNano())
+	return new(Random)
+}
+
+func (r *Random) String(length uint8, items ...string) string {
+	charset := strings.Join(items, "")
+	b := make([]byte, length)
+	for i := range b {
+		b[i] = charset[rand.Int63()%int64(len(charset))]
+	}
+	return string(b)
+}
+
+func String(length uint8, charsets ...Charset) string {
+	if len(charsets) == 0 {
+		charsets = append(charsets, Alphanumeric)
+	}
+	var (
+		items []string
+	)
+	for _, charset := range charsets {
+		items = append(items, string(charset))
+	}
+	return global.String(length, items...)
+}
 
 // GetRandomNumber  get numbers for random
 func GetRandomNumber(l int) string {
