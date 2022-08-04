@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/go-kratos/kratos/v2/config/env"
 	"net/url"
 	"strings"
 
@@ -25,6 +26,7 @@ type (
 const (
 	Etcd Schema = "etcd"
 	File Schema = "file"
+	ENV  Schema = "env"
 	// todo @remember support more config schema if needed
 	// todo @remember add test for config schema
 )
@@ -74,6 +76,11 @@ Loop:
 		case File:
 			// if Schema is File,host means file path
 			conf = config.New(config.WithSource(file.NewSource(host)))
+			if conf != nil {
+				break Loop
+			}
+		case ENV:
+			conf = config.New(config.WithSource(env.NewSource()))
 			if conf != nil {
 				break Loop
 			}
