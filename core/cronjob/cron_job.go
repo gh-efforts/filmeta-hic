@@ -58,15 +58,15 @@ func warpJob(name string, fn JobFn) cron.Job {
 		ctx := context.Background()
 		defer func() {
 			if p := recover(); p != nil {
-				log.Errorf("定时任务 %s 发生异常: %v", name, p)
+				log.Errorf("cron job  %s error: %v", name, p)
 			}
 		}()
 
 		begin := time.Now()
-		log.Errorf("开始执行脚本", name)
+		log.Errorf("start shell", name)
 
 		fn(ctx)
-		log.Infof("结束执行脚本: %s, 耗时%.3fs", name, time.Since(begin).Seconds())
+		log.Infof("job %s is over, speed time %.3fs", name, time.Since(begin).Seconds())
 	}))
 }
 
@@ -80,7 +80,7 @@ func (c *Runner) Start(ctx context.Context) (err error) {
 		if err != nil {
 			return err
 		}
-		log.Infof("添加定时任务: %s,周期", job.Name, job.Spec)
+		log.Infof("Add a timing job : %s,the timing is:%v", job.Name, job.Spec)
 	}
 
 	c.cron.Start()
@@ -90,6 +90,6 @@ func (c *Runner) Start(ctx context.Context) (err error) {
 
 func (c *Runner) Stop(ctx context.Context) error {
 	c.cron.Stop()
-	log.Infof("停止定时任务")
+	log.Infof("stop the runner")
 	return nil
 }
