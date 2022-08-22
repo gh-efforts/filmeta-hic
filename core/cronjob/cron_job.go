@@ -63,7 +63,7 @@ func warpJob(name string, fn JobFn) cron.Job {
 		}()
 
 		begin := time.Now()
-		log.Errorf("start shell:%v", name)
+		log.Infof("start shell:%v", name)
 
 		fn(ctx)
 		log.Infof("job %s is over, speed time %.3fs", name, time.Since(begin).Seconds())
