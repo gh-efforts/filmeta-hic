@@ -4,6 +4,7 @@ import (
 	"github.com/gin-gonic/gin"
 	kgin "github.com/go-kratos/gin"
 	"github.com/go-kratos/kratos/v2/middleware"
+	"github.com/go-kratos/kratos/v2/middleware/recovery"
 	"github.com/go-kratos/kratos/v2/transport/http"
 )
 
@@ -16,6 +17,10 @@ func GetHttpServer(registerFn RegisterRoutes, middlewares []middleware.Middlewar
 	e.GET("/heath", func(c *gin.Context) {
 		c.String(200, "success")
 	})
+	middlewares = append([]middleware.Middleware{
+		recovery.Recovery(),
+	}, middlewares...)
+
 	e.Use(kgin.Middlewares(middlewares...))
 	registerFn(e)
 	httpSrv := http.NewServer(options...)

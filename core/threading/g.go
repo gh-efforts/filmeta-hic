@@ -1,19 +1,20 @@
 package threading
 
 import (
-	"fmt"
-
 	"github.com/bitrainforest/filmeta-hic/core/log"
+	"runtime/debug"
 )
 
 func GoSafe(fn func()) {
+	go safe(fn)
+}
+func safe(fn func()) {
 	defer func() {
 		if p := recover(); p != nil {
 			if log.IsInit() {
-				log.Warnf("[GoSafe] err: %v", p)
+				log.Errorf("[GoSafe] err: %s\n%s", p, string(debug.Stack()))
 			}
-			fmt.Println("GoSafe happens panic:", p)
 		}
 	}()
-	go fn()
+	fn()
 }
