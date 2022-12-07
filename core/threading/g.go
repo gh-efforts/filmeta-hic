@@ -1,8 +1,9 @@
 package threading
 
 import (
-	"github.com/bitrainforest/filmeta-hic/core/log"
 	"runtime/debug"
+
+	"github.com/bitrainforest/filmeta-hic/core/log"
 )
 
 func GoSafe(fn func()) {

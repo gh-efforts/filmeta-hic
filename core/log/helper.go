@@ -45,7 +45,7 @@ var (
 func SetUp(name string, level Level) {
 	helper = log.NewHelper(NewLogger(name))
 	// There has to be
-	_ = ipfsLog.SetLogLevel(name, level.String()) // nolint
+	_ = ipfsLog.SetLogLevel(name, level.String()) //nolint:errcheck
 }
 
 func Debugf(format string, vals ...interface{}) {
