@@ -15,11 +15,16 @@ type FixedEnv struct {
 	GinMODE        string `json:"GIN_MODE"`  //  default "debug"
 	Repo           string `json:"REPO"`
 	ImportSnapshot string `json:"IMPORT_SNAPSHOT"`
+	DataSource     string `json:"DATA_SOURCE"`
+
 	// todo remember add more env config if needed
 }
 
 var (
-	fixedEnv = &FixedEnv{HttpAddr: ":8088", GinMODE: "pro", ConfigETCD: "etcd://127.0.0.1:2379"}
+	fixedEnv = &FixedEnv{
+		HttpAddr: ":8088", GinMODE: "pro", ConfigETCD: "etcd://127.0.0.1:2379",
+		DataSource: "lily",
+	}
 )
 
 func init() {
@@ -39,6 +44,10 @@ func (f *FixedEnv) IsDebug() bool {
 }
 func (f *FixedEnv) IsPro() bool {
 	return f.GinMODE == "pro"
+}
+
+func (f *FixedEnv) IsDataExTern() bool {
+	return f.DataSource == "extern"
 }
 
 func Setup() error {
